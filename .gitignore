@@ -1,0 +1,10 @@
+# DNX
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# VSCODE
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
