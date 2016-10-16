@@ -1,8 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace TimeSheet.src.util {
 	public class Time {
+		public IList<TimeSpan> TimesIn { get; set; }
+		public IList<TimeSpan> TimesOut { get; set; }
+
+		public Time (){
+		  TimesIn = new List<TimeSpan>();
+		  TimesOut = new List<TimeSpan>();
+		}
+
 		/// <summary>
 		/// Parses a string into a TimeSpan with the desired format string
 		/// </summary>
@@ -19,6 +28,15 @@ namespace TimeSheet.src.util {
 
             return false;
         }
+
+		public TimeSpan CalculateTimeOut() {
+			var totalTime = new TimeSpan(08, 00, 00);
+			var totalTimeOut = new TimeSpan(0, 0, 0);
+			for (var i = 1; i < TimesIn.Count; i++) {
+				totalTimeOut = totalTimeOut.Add(TimesIn[i].Subtract(TimesOut[i - 1]));
+			}
+			return TimesIn[0].Add(totalTime).Add(totalTimeOut);
+		}
 
 		public static TimeSpan CalculateResultingTimeSpan(params TimeSpan[] timeSpans) {
 			if (timeSpans.Length % 2 != 0) {

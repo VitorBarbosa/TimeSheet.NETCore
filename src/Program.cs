@@ -10,47 +10,14 @@ namespace TimeSheet.src {
     public class Program : Attribute {
 
         private Dictionary<string, MethodInfo> commands;
+        public Time time { get; private set;}
 
         public static void Main(string[] args) {
             new Program().Initialize();
-
-            //var culture = CultureInfo.CurrentCulture;
-            //var totalTime = new TimeSpan(08, 00, 00);
-            //bool result;
-            //TimeSpan timeIn1TimeSpan, timeOut1TimeSpan, timeIn2TimeSpan;
-
-            //Console.WriteLine("TimeSheet");
-            //Console.WriteLine();
-            //do {
-            //    Console.WriteLine("Check In (format 14:14)");
-            //    var timeIn1 = Console.ReadLine();
-            //    result = Time.ParseTimeSpan(timeIn1, out timeIn1TimeSpan);
-            //    if (!result) {
-            //        Console.WriteLine("Error reading time");
-            //    }
-            //} while (!result);
-            //do {
-            //    Console.WriteLine("Check Out (format 14:14)");
-            //    var timeOut1 = Console.ReadLine();
-            //    result = Time.ParseTimeSpan(timeOut1, out timeOut1TimeSpan);
-            //    if (!result) {
-            //        Console.WriteLine("Error reading time");
-            //    }
-            //} while (!result);
-            //do {
-            //    Console.WriteLine("Check In (format 14:14)");
-            //    var timeIn2 = Console.ReadLine();
-            //    result = Time.ParseTimeSpan(timeIn2, out timeIn2TimeSpan);
-            //    if (!result) {
-            //        Console.WriteLine("Error reading time");
-            //    }
-            //} while (!result);
-            //// show expected time out
-            //var time2leave = timeIn1TimeSpan.Add(totalTime).Add(timeIn2TimeSpan.Subtract(timeOut1TimeSpan));
-            //Console.WriteLine($"Time to leave: {time2leave}");
         }
 
         public void Initialize() {
+            time = new Time();
             commands = new Dictionary<string, MethodInfo>();
 
             var methods = this.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
@@ -98,7 +65,10 @@ namespace TimeSheet.src {
         /// <param name="args"></param>
         [Command]
         private void help(string[] args) {
-            Console.WriteLine("help!!");
+            Console.WriteLine("timein [00:00]\t\tAdd a new time in");
+            Console.WriteLine("timeout [00:00]\t\tAdd a new time out");
+            Console.WriteLine("timetoleave\t\tShow time to leave");
+            Console.WriteLine("print\t\t\tShow current list of times in and out");
         }
 
         /// <summary>
@@ -117,6 +87,43 @@ namespace TimeSheet.src {
         [Command]
         private void tstargs(string[] args) {
             Console.WriteLine(String.Join(", ",args));
+        }
+
+        [Command]
+        private void timeIn(string[] args) {
+            TimeSpan timeInTimeSpan;
+            var result = Time.ParseTimeSpan(args[0], out timeInTimeSpan);
+            if (!result) {
+                Console.WriteLine("Error reading time");
+            } else {
+                time.TimesIn.Add(timeInTimeSpan);
+            }
+        }
+
+        [Command]
+        private void timeOut(string[] args) {
+            TimeSpan timeOutTimeSpan;
+            var result = Time.ParseTimeSpan(args[0], out timeOutTimeSpan);
+            if (!result) {
+                Console.WriteLine("Error reading time");
+            } else {
+                time.TimesOut.Add(timeOutTimeSpan);
+            }
+        }
+
+        [Command]
+        private void timeToLeave(string[] args) {
+            Console.WriteLine($"Time to leave: {time.CalculateTimeOut()}");
+        }
+
+        /// <summary>
+		/// Shows current lists of times in and out
+		/// </summary>
+		/// <param name="args"></param>
+        [Command]
+        private void print(string[] args) {
+            Console.WriteLine($"Times in: {string.Join(", ", time.TimesIn)}");
+            Console.WriteLine($"Times out: {string.Join(", ", time.TimesOut)}");
         }
     }
 
