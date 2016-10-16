@@ -6,6 +6,7 @@ Install [.NET Core](http://dot.net)
 
 ### Usage:  
 1. Navigate to the repo's directory in cmd  
-2. `dotnet restore`  
-3. `dotnet run`  
-4. profit  
+1. `dotnet restore`  
+1. `dotnet run`  
+1. `help` shows available commands
+1. profit  
